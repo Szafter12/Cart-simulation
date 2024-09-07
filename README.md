@@ -2,7 +2,7 @@
 # JavaScript Cart OOP with json data
 
 It's a cart simulator for the browser's side using data from data.json file. You can add and delete produtcs and it will automatically calculate a finall price (You can also edit data.json file to add more products)
-
+Products in cart will be saved in localstorage so if you add some products and reload the site it will be still in your cart  
 
 ## Demo
 
