@@ -124,6 +124,7 @@ class Cart {
 	delFromCart(id) {
 		const index = this.cartArray.findIndex(el => el.id === id)
 		this.cartArray.splice(index, 1)
+		this.finalPrice()
 		this.saveCart()
 		this.loadCart()
 	}
