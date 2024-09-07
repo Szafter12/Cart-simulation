@@ -14,16 +14,11 @@ https://szafter12.github.io/JavaScript-Cart-OOP/
     git clone https://github.com/Szafter12/JavaScript-Cart-OOP 
 
 
-    
-
-
-
-
 ## Appendix
 
-You can edit data.json file in assets/data to add more products
+You can edit data.json file to add more products or edit exist products
 
-Remember if you add custom img files you should put them to assets/img
+Remember if you add custom img files you should put them to img folder
 
 In src filed you need to type name of the img file you want to add to the product 
 
