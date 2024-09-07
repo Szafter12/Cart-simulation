@@ -70,6 +70,7 @@ h1 {
 	width: 30px;
 	height: 30px;
 	font-size: 1.2rem;
+	font-weight: 600;
 	background-color: var(--text-color);
 	bottom: -8px;
 	left: -6px;
