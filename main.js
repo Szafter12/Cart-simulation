@@ -1,4 +1,3 @@
-'use strict'
 class Cart {
 	constructor() {
 		this.cartArray = JSON.parse(localStorage.getItem('cart')) || []
@@ -6,7 +5,7 @@ class Cart {
 
 	async loadData() {
 		try {
-			const res = await fetch('../../assets/data/data.json')
+			const res = await fetch('./data.json')
 			if (!res.ok) {
 				throw new Error(`HTTP error! status: ${res.status}`)
 			}
@@ -26,7 +25,7 @@ class Cart {
 
 			const productImg = document.createElement('img')
 			productImg.classList.add('product__img')
-			productImg.setAttribute('src', `../../assets/img/${el.src}`)
+			productImg.setAttribute('src', `./img/${el.src}`)
 			productImg.setAttribute('alt', `sandwich ${index}`)
 			product.appendChild(productImg)
 
@@ -97,7 +96,7 @@ class Cart {
 		const cartProduct = document.createElement('div')
 		cartProduct.classList.add('cart__product')
 		cartProduct.innerHTML = `
-			<img class="product__img" src="../../assets/img/${product.src}" alt="">
+			<img class="product__img" src="./img/${product.src}" alt="">
 			<div class="product__body">
 				<p class="product__title">${product.title}</p>
 				<p>Tax: 23%</p>
