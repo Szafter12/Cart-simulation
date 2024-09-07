@@ -75,9 +75,9 @@ h1 {
 .cart-container {
 	flex-wrap: wrap;
 	gap: 2em;
-	margin: 10em auto;
+	margin: 10em auto 0 auto;
 	padding: 4em 5em;
-	height: 500px;
+	height: 450px;
 	overflow-y: auto;
 }
 
@@ -181,5 +181,11 @@ h1 {
 @media (min-width: 768px) {
 	.cart {
 		width: 50%;
+	}
+}
+
+@media (min-width: 567px) {
+	.cart-container {
+		height: 500px;
 	}
 }
