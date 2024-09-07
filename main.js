@@ -77,6 +77,21 @@ class Cart {
 			this.loadCart()
 		}
 		this.finalPrice()
+		this.handleCounter()
+		this.showModal()
+	}
+
+	showModal() {
+		const modal = document.querySelector(".modalAddToCart")
+		modal.classList.add("modal-active")
+		setTimeout(() => {
+			modal.classList.remove("modal-active")
+		},1500)
+	}
+
+	handleCounter() {
+		const counter = document.querySelector(".counter-cart")
+		counter.textContent = this.cartArray.length
 	}
 
 	loadCart() {
@@ -87,8 +102,9 @@ class Cart {
 			this.cartArray.forEach(el => {
 				this.createCartProduct(el)
 			})
-			this.finalPrice()
 		}
+		this.finalPrice()
+		this.handleCounter()
 	}
 
 	createCartProduct(product) {
@@ -124,7 +140,6 @@ class Cart {
 	delFromCart(id) {
 		const index = this.cartArray.findIndex(el => el.id === id)
 		this.cartArray.splice(index, 1)
-		this.finalPrice()
 		this.saveCart()
 		this.loadCart()
 	}
