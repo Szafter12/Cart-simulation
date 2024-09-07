@@ -71,8 +71,8 @@ h1 {
 	height: 30px;
 	font-size: 1.2rem;
 	background-color: var(--text-color);
-	bottom: -10px;
-	left: -5px;
+	bottom: -8px;
+	left: -6px;
 	border-radius: 50%;
 }
 
