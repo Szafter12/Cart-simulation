@@ -74,6 +74,7 @@ h1 {
 	bottom: -8px;
 	left: -6px;
 	border-radius: 50%;
+	pointer-events: none;
 }
 
 .quantity-btns {
