@@ -20,8 +20,12 @@ You can edit data.json file to add more products or edit exist products
 
 Remember if you add custom img files you should put them to img folder
 
-In src filed you need to type name of the img file you want to add to the product 
+In src filed you need to type name of the img file you want to add to the product
 
+## Preview
+
+<img src="./README_File/README1.png">
+<img src="./README_File/README2.png">
 
 ## Authors
 
