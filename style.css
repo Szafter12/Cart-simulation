@@ -76,6 +76,23 @@ h1 {
 	border-radius: 50%;
 }
 
+.quantity-btns {
+	margin-left: 0.5em;
+	flex-direction: column;
+	gap: 0.3em;
+}
+
+.quantity-btns button {
+	padding: 0.1em 0.5em;
+	border-radius: 8px;
+	background-color: var(--main-color);
+}
+
+.quantity-btns button svg {
+	width: 16px;
+	height: 16px;
+}
+
 .cart {
 	position: absolute;
 	right: 0;
