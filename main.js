@@ -91,7 +91,12 @@ class Cart {
 
 	handleCounter() {
 		const counter = document.querySelector('.counter-cart')
-		counter.textContent = this.cartArray.length
+		// counter.textContent = this.cartArray.length
+		let counterValue = 0
+		this.cartArray.forEach(el => {
+			counterValue += el.quantity
+		})
+		counter.textContent = counterValue
 	}
 
 	loadCart() {
