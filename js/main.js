@@ -13,6 +13,7 @@ class Cart {
 			this.displayProducts(data)
 		} catch (error) {
 			console.error(error)
+			return
 		}
 	}
 
@@ -76,9 +77,10 @@ class Cart {
 					headers: {
 						'Content-Type': 'Application/json',
 					},
+					credentials: 'include',
 					body: JSON.stringify({
-						id: id
-					})
+						id: id,
+					}),
 				})
 
 				if (!res.ok) {
@@ -94,7 +96,6 @@ class Cart {
 					this.saveCart()
 					this.loadCart()
 				}
-				
 			} catch (e) {
 				console.error('Wystąpił błąd podczas dodawania do koszyka')
 			}
@@ -207,12 +208,132 @@ const cart = new Cart()
 
 window.addEventListener('load', () => {
 	const cartBox = document.querySelector('.cart')
-	document.querySelector('.cart-btn').addEventListener('click', () => {
+	const loginForm = document.getElementById('login-form')
+	const registerForm = document.getElementById('register-form')
+	const authBtnTemplate = document.querySelector('#auth-btn-template')
+	const authBtnContainer = document.querySelector('.auth-btns')
+	const logoutBtn = document.getElementById("logout")
+	let isLoggedIn = false
+
+	async function checkLogin() {
+		const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/checkUser.php', {
+			credentials: 'include',
+			method: 'GET',
+		})
+
+		const data = await res.json()
+
+		if (data.status === 'success') {
+			isLoggedIn = true
+			showBtns()
+		} else {
+			isLoggedIn = false
+			showBtns()
+		}
+	}
+
+	function showBtns() {
+		if (!isLoggedIn) {
+			const btnBox = [
+				{ name: 'Login', attr: '#loginModal' },
+				{ name: 'Register', attr: '#registerModal' },
+			]
+			btnBox.forEach(el => {
+				const clone = authBtnTemplate.content.cloneNode(true)
+				clone.querySelector('.cart-btn').textContent = el.name
+				clone.querySelector('.cart-btn').setAttribute('data-bs-target', el.attr)
+				authBtnContainer.appendChild(clone)
+			})
+		} else {
+			const clone = authBtnTemplate.content.cloneNode(true)
+			clone.querySelector('.cart-btn').textContent = "Logout"
+			clone.querySelector('.cart-btn').setAttribute('id', 'logout')
+			authBtnContainer.appendChild(clone)
+		}
+	}
+
+	async function login(e) {
+		e.preventDefault()
+		const msgBox = document.getElementById('msg')
+		const userData = new FormData(this)
+		msgBox.textContent = ''
+
+		try {
+			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/login.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'Application/json',
+				},
+				credentials: 'include',
+				body: JSON.stringify(userData),
+			})
+
+			if (!res.ok) {
+				msgBox.textContent = 'server error try again later'
+				msgBox.classList.add('text-danger')
+				return
+			}
+
+			const data = await res.json()
+
+			if ((data.status = 'success')) {
+				location.reload()
+			} else {
+				msgBox.textContent = data.message
+				msgBox.classList.add('text-danger')
+				return
+			}
+		} catch {
+			msgBox.textContent = 'server error try again later'
+			msgBox.classList.add('text-danger')
+			return
+		}
+	}
+
+	async function register(e) {
+		e.preventDefault()
+		const msgBox = document.getElementById('msg')
+		const userData = new FormData(this)
+		console.log(userData)
+		msgBox.textContent = ''
+
+		try {
+			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/register.php', {
+				method: 'POST',
+				body: userData,
+			})
+
+			if (!res.ok) {
+				msgBox.textContent = 'server error try again later'
+				msgBox.classList.add('text-danger')
+				return
+			}
+
+			const data = await res.json()
+
+			if ((data.status = 'success')) {
+				location.reload()
+			} else {
+				msgBox.textContent = data.message
+				msgBox.classList.add('text-danger')
+				return
+			}
+		} catch {
+			msgBox.textContent = 'server error try again later'
+			msgBox.classList.add('text-danger')
+			return
+		}
+	}
+
+	document.querySelector('#cart-btn').addEventListener('click', () => {
 		cartBox.classList.add('active')
 	})
 	document.querySelector('#close-cart').addEventListener('click', () => {
 		cartBox.classList.remove('active')
 	})
+	loginForm.addEventListener('submit', login)
+	registerForm.addEventListener('submit', register)
 	cart.loadData()
 	cart.loadCart()
+	checkLogin()
 })

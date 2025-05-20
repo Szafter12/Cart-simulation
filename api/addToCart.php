@@ -1,19 +1,25 @@
 <?php
+
 require_once "db_conn.php";
+require_once "utils.php";
+
+init_session();
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
 $cart = [];
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = file_get_contents("php://input");
     $data = json_decode($data, true);
     $value = ['product_id' => $data['id']];
 
-    if (empty($_SESSION['name'])) {
+    if (empty($_SESSION['user_id'])) {
         if (empty($_COOKIE['cart'])) {
             addCookie($value);
+
         } else {
             $last_cart = json_decode($_COOKIE['cart'], true);
             $ids = $last_cart['product_id'];
@@ -23,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $cart = [
                     'product_id' => $ids
                 ];
+
             } else {
                 $cart = [
                     'product_id' => [$ids, $data['id']]
@@ -32,20 +39,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             addCookie($cart);
         }
 
-        http_response_code(200);
-        echo json_encode([
-            'status' => 'success',
-            'message' => "Produkt dodany do koszyka"
-        ]);
-        exit;
+        res('success', 'Produkt dodany do koszyka', [], 200);
+    } else {
+        try {
+            $user_id = $_SESSION['user_id'];
+            $product_id = $data['id'];
+
+            $sql = "INSERT INTO cart ('user_id', 'product_id') VALUES (:user_id, :product_id)";
+            $stmt = $conn->prepare($sql);
+            
+            if ($stmt->execute([
+                'user_id' => $user_id,
+                'product_id' => $product_id
+            ])) {
+                res('success', "Produkt pomyślnie dodany do koszyka", [], 200);
+            } else {
+                res('error', 'nie udało się dodać produktu do koszyka', [], 500);
+            }
+            
+
+        } catch (PDOException $e) {
+            res('error', 'Wystąpił błąd serwera proszę spróbować później', [], 500);
+        }
+
     }
 } else {
-    http_response_code(500);
-    echo json_encode([
-        'status' => 'error',
-        'message' => "Błąd serwera spróbuj później"
-    ]);
-    exit;
+    res('error', 'Niedozwolona metoda', [], 405);
 }
 
 function addCookie($data)
@@ -60,3 +79,5 @@ function addCookie($data)
         true
     );
 }
+
+
