@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-session_start();
+init_session();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $name = $_POST['name'];
@@ -17,15 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $repeat_password = $_POST['repeat_password'];
 
     if (empty($name) || empty($surname) || empty($email) || empty($password) || empty($repeat_password)) {
-        res('error', 'All fields require', [], 200);
+        res('error', 400, 'All fields require');
     }
 
     if ($password !== $repeat_password) {
-        res('error', 'Passwords must be the same', [], 200);
+        res('error', 400, 'Passwords must be the same');
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        res('error', 'provide valid email', [], 200);
+        res('error', 400, 'provide valid email');
     }
 
     $hash_password = password_hash($password, PASSWORD_BCRYPT);
@@ -38,22 +38,23 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             'name' => $name,
             'surname' => $surname,
             'email' => $email,
-            'password' => $password
+            'password' => $hash_password
         ])) {
             if ($stmt->rowCount() > 0) {
+                session_regenerate_id(true);
                 $_SESSION['user_id'] = $conn->lastInsertId();
                 $_SESSION['name'] = $name;
                 $_SESSION['surname'] = $surname;
                 $_SESSION['email'] = $email;
 
-                res('success', 'User successfuly register', [], 200);
+                res('success', 200, 'User successfuly register');
             } else {
-                res("error", "User already exist", [], 200);
+                res("error", 400, "User already exist");
             }
         } else {
-            res('error', 'Error while adding new user', [], 500);
+            res('error', 500, 'Error while adding new user');
         }
     } catch (PDOException $e) {
-        res('error', 'Error while adding new user', [], 500);
+        res('error', 500, 'Error while adding new user');
     }
 }

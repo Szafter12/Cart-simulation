@@ -1,5 +1,6 @@
 <?php
+require_once 'utils.php';
 
 session_start();
 session_destroy();
-exit;
+res("success", 200, 'Loggout');

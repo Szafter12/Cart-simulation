@@ -212,7 +212,6 @@ window.addEventListener('load', () => {
 	const registerForm = document.getElementById('register-form')
 	const authBtnTemplate = document.querySelector('#auth-btn-template')
 	const authBtnContainer = document.querySelector('.auth-btns')
-	const logoutBtn = document.getElementById("logout")
 	let isLoggedIn = false
 
 	async function checkLogin() {
@@ -246,9 +245,11 @@ window.addEventListener('load', () => {
 			})
 		} else {
 			const clone = authBtnTemplate.content.cloneNode(true)
-			clone.querySelector('.cart-btn').textContent = "Logout"
+			clone.querySelector('.cart-btn').textContent = 'Logout'
 			clone.querySelector('.cart-btn').setAttribute('id', 'logout')
 			authBtnContainer.appendChild(clone)
+			const logoutBtn = document.getElementById('logout')
+			logoutBtn.addEventListener('click', logout)
 		}
 	}
 
@@ -261,20 +262,16 @@ window.addEventListener('load', () => {
 		try {
 			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/login.php', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'Application/json',
-				},
-				credentials: 'include',
-				body: JSON.stringify(userData),
+				body: userData
 			})
 
+			const data = await res.json()
+
 			if (!res.ok) {
-				msgBox.textContent = 'server error try again later'
+				msgBox.textContent = data.message
 				msgBox.classList.add('text-danger')
 				return
 			}
-
-			const data = await res.json()
 
 			if ((data.status = 'success')) {
 				location.reload()
@@ -284,7 +281,7 @@ window.addEventListener('load', () => {
 				return
 			}
 		} catch {
-			msgBox.textContent = 'server error try again later'
+			msgBox.textContent = 'Something went wrong try again later'
 			msgBox.classList.add('text-danger')
 			return
 		}
@@ -294,7 +291,6 @@ window.addEventListener('load', () => {
 		e.preventDefault()
 		const msgBox = document.getElementById('msg')
 		const userData = new FormData(this)
-		console.log(userData)
 		msgBox.textContent = ''
 
 		try {
@@ -303,25 +299,42 @@ window.addEventListener('load', () => {
 				body: userData,
 			})
 
+			const data = await res.json()
+
 			if (!res.ok) {
-				msgBox.textContent = 'server error try again later'
+				msgBox.textContent = data.msg
 				msgBox.classList.add('text-danger')
 				return
 			}
 
-			const data = await res.json()
-
 			if ((data.status = 'success')) {
 				location.reload()
+				return
 			} else {
 				msgBox.textContent = data.message
 				msgBox.classList.add('text-danger')
 				return
 			}
 		} catch {
-			msgBox.textContent = 'server error try again later'
+			msgBox.textContent = 'something went wrong try again later'
 			msgBox.classList.add('text-danger')
 			return
+		}
+	}
+
+	async function logout() {
+		try {
+			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/logout.php', {
+				method: 'GET',
+			})
+
+			const data = await res.json()
+
+			if (data.status == 'success') {
+				location.reload()
+			}
+		} catch {
+			console.error('Error')
 		}
 	}
 

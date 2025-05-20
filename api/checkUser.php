@@ -3,6 +3,7 @@
 require_once 'db_conn.php';
 require_once 'utils.php';
 
+header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 
@@ -10,8 +11,8 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_SESSION['user_id'])) {
-        res('success', 'User is logged in', [], 200);
+        res('success', 200, 'User is logged in');
     } else {
-        res('error', 'User unknow', [], 200);
+        res('error',200, 'User unknow');
     }
 }

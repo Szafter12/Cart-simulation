@@ -19,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_SESSION['user_id'])) {
         if (empty($_COOKIE['cart'])) {
             addCookie($value);
-
         } else {
             $last_cart = json_decode($_COOKIE['cart'], true);
             $ids = $last_cart['product_id'];
@@ -29,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $cart = [
                     'product_id' => $ids
                 ];
-
             } else {
                 $cart = [
                     'product_id' => [$ids, $data['id']]
@@ -39,32 +37,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             addCookie($cart);
         }
 
-        res('success', 'Produkt dodany do koszyka', [], 200);
+        res('success', 200, 'Product added to the cart');
     } else {
         try {
             $user_id = $_SESSION['user_id'];
             $product_id = $data['id'];
 
-            $sql = "INSERT INTO cart ('user_id', 'product_id') VALUES (:user_id, :product_id)";
+            $sql = "INSERT INTO cart (user_id, product_id) VALUES (:user_id, :product_id)";
             $stmt = $conn->prepare($sql);
-            
+
             if ($stmt->execute([
                 'user_id' => $user_id,
                 'product_id' => $product_id
             ])) {
-                res('success', "Produkt pomyślnie dodany do koszyka", [], 200);
+                res('success', 200, "Successfully added product to the cart");
             } else {
-                res('error', 'nie udało się dodać produktu do koszyka', [], 500);
+                res('error', 400, 'Adding product to the cart failed');
             }
-            
-
         } catch (PDOException $e) {
-            res('error', 'Wystąpił błąd serwera proszę spróbować później', [], 500);
+            res('error', 500, $e);
         }
-
     }
 } else {
-    res('error', 'Niedozwolona metoda', [], 405);
+    res('error', 405, 'Method not allowed');
 }
 
 function addCookie($data)
@@ -79,5 +74,3 @@ function addCookie($data)
         true
     );
 }
-
-
