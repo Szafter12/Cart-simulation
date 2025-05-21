@@ -1,33 +1,33 @@
+# 🛒 Shopping Cart Simulation
 
-# JavaScript Cart with json data
+This is a simple simulation of an e-commerce shopping cart system built with **PHP**, **MySQL**, and **JavaScript**. The project demonstrates how cart data is handled both for logged-in and guest users, using **cookies** and **server-side sessions**.
 
-It's a cart simulator for the browser's side using data from data.json file. You can add and delete produtcs and it will automatically calculate a finall price (You can also edit data.json file to add more products)
-Products in cart will be saved in localstorage so if you add some products and reload the site it will be still in your cart  
+## 🚀 Features
 
-## Demo
+- User login and registration system
+- Persistent shopping cart for both guests and logged-in users
+- Cart items stored in **cookies** for guests
+- On login, cart items from cookies are **transferred** to the authenticated user's cart
+- Secure backend API communication using `fetch` and `credentials: "include"`
 
-https://szafter12.github.io/JavaScript-Cart-OOP/
+## 🔧 Technologies
 
+- **Frontend**: HTML, CSS, JavaScript (vanilla)
+- **Backend**: PHP (native, no frameworks)
+- **Database**: MySQL
 
-## Getting Start
-    
-    git clone https://github.com/Szafter12/JavaScript-Cart-OOP 
+## 📦 How it works
 
+1. A **guest user** can browse the site and add products to the cart.
+2. These cart items are saved locally in **cookies**.
+3. When the user **logs in**:
+   - The backend checks for any existing cart data in cookies.
+   - If found, those items are automatically **merged** into the user's cart stored in the database or session.
+4. The user's cart is now managed server-side and kept across sessions.
 
-## Appendix
+## 🔐 Authentication
 
-You can edit data.json file to add more products or edit exist products
-
-Remember if you add custom img files you should put them to img folder
-
-In src filed you need to type name of the img file you want to add to the product
-
-## Preview
-
-<img src="./README_File/README1.png">
-<img src="./README_File/README2.png">
-
-## Authors
-
-- [@Jakub Pachut](https://www.github.com/Szafter12)
-
+- Basic login system (no frameworks)
+- PHP sessions (`$_SESSION`) are used to manage user state
+- Cookies are used for temporary cart storage before login
+- Cross-origin safe requests with `fetch` and `credentials: "include"`
