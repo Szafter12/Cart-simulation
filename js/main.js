@@ -1,6 +1,6 @@
 class Cart {
 	constructor() {
-		this.cartArray = JSON.parse(localStorage.getItem('cart')) || []
+		this.cartArray = []
 	}
 
 	async loadData() {
@@ -64,42 +64,30 @@ class Cart {
 	}
 
 	async addToCart(product) {
-		const InCart = this.cartArray.find(item => item.id === product.id)
-		if (InCart) {
-			InCart.quantity += 1
-			this.saveCart()
-			this.loadCart()
-		} else {
-			const id = product.id
-			try {
-				const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/addToCart.php', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'Application/json',
-					},
-					credentials: 'include',
-					body: JSON.stringify({
-						id: id,
-					}),
-				})
+		const id = product.id
+		try {
+			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/addToCart.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'Application/json',
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					id: id,
+				}),
+			})
 
-				if (!res.ok) {
-					throw new Error('HTTP error')
-				}
+			const data = await res.json()
 
-				const data = await res.json()
-
-				if (data.status === 'success') {
-					product.quantity = 1
-					this.createCartProduct(product)
-					this.cartArray.push(product)
-					this.saveCart()
-					this.loadCart()
-				}
-			} catch (e) {
-				console.error('Wystąpił błąd podczas dodawania do koszyka')
+			if (data.status === 'success') {
+				this.createCartProduct(product)
+				this.cartArray.push(product)
+				this.loadCart()
 			}
+		} catch (e) {
+			console.error('Wystąpił błąd podczas dodawania do koszyka')
 		}
+
 		this.finalPrice()
 		this.handleCounter()
 		this.showModal()
@@ -115,14 +103,25 @@ class Cart {
 
 	handleCounter() {
 		const counter = document.querySelector('.counter-cart')
-		let counterValue = 0
-		this.cartArray.forEach(el => {
-			counterValue += el.quantity
-		})
-		counter.textContent = counterValue
+		counter.textContent = this.cartArray.length
 	}
 
-	loadCart() {
+	async loadCart() {
+		try {
+			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/showCart.php', {
+				method: 'GET',
+				credentials: 'include',
+			})
+
+			const data = await res.json()
+
+			if (data.status === 'success') {
+				this.cartArray = data.data
+			}
+		} catch (e) {
+			console.error('Wystąpił błąd podczas pobierania koszyka')
+		}
+
 		document.querySelector('.cart-container').textContent = ''
 		if (this.cartArray.length == 0) {
 			document.querySelector('.cart-container').innerHTML = '<p class="fs-3 text-center">The cart is empty</p>'
@@ -144,19 +143,6 @@ class Cart {
 			<div class="product__body">
 				<p class="product__title">${product.name}</p>
 				<p>Tax: 23%</p>
-				<p class="fs-4">
-				<div class="d-flex justify-content-start align-items-center">
-					Quantity: ${product.quantity}
-					<div class="quantity-btns d-flex">
-						<button onclick="cart.incrementQuantity(${product.id})">
-							<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M18 11l-6 -6" /><path d="M6 11l6 -6" /></svg>
-						</button>
-						<button onclick="cart.decrementQuantity(${product.id})">
-							<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M18 13l-6 6" /><path d="M6 13l6 6" /></svg>
-						</button>
-					</div>
-				</div>
-				</p>
 				<div class="d-flex w-100 justify-content-around align-items-center mt-3">
 					<p class="product__price mb-0">${product.price}$</p>
 					<button class="delBtn" onclick="cart.delFromCart(${product.id})">Delete</button>
@@ -166,25 +152,11 @@ class Cart {
 		cartContainer.appendChild(cartProduct)
 	}
 
-	incrementQuantity(id) {
-		const index = this.cartArray.findIndex(el => el.id === id)
-		this.cartArray[index].quantity++
-		this.saveCart()
-		this.loadCart()
-	}
-
-	decrementQuantity(id) {
-		const index = this.cartArray.findIndex(el => el.id === id)
-		if (this.cartArray[index].quantity <= 1) return
-		this.cartArray[index].quantity--
-		this.saveCart()
-		this.loadCart()
-	}
-
 	finalPrice() {
 		let priceQuantity = 0
+		
 		this.cartArray.forEach(el => {
-			priceQuantity += el.price * el.quantity
+			priceQuantity += Number(el.price)
 		})
 		let finalPrice = priceQuantity * 1.23
 		document.querySelector('.final').innerHTML = `Final price <span class="final-price">${finalPrice.toFixed(
@@ -195,12 +167,7 @@ class Cart {
 	delFromCart(id) {
 		const index = this.cartArray.findIndex(el => el.id === id)
 		this.cartArray.splice(index, 1)
-		this.saveCart()
 		this.loadCart()
-	}
-
-	saveCart() {
-		localStorage.setItem('cart', JSON.stringify(this.cartArray))
 	}
 }
 
@@ -208,8 +175,6 @@ const cart = new Cart()
 
 window.addEventListener('load', () => {
 	const cartBox = document.querySelector('.cart')
-	const loginForm = document.getElementById('login-form')
-	const registerForm = document.getElementById('register-form')
 	const authBtnTemplate = document.querySelector('#auth-btn-template')
 	const authBtnContainer = document.querySelector('.auth-btns')
 	let isLoggedIn = false
@@ -243,6 +208,10 @@ window.addEventListener('load', () => {
 				clone.querySelector('.cart-btn').setAttribute('data-bs-target', el.attr)
 				authBtnContainer.appendChild(clone)
 			})
+			const loginForm = document.getElementById('login-form')
+			const registerForm = document.getElementById('register-form')
+			loginForm.addEventListener('submit', login)
+			registerForm.addEventListener('submit', register)
 		} else {
 			const clone = authBtnTemplate.content.cloneNode(true)
 			clone.querySelector('.cart-btn').textContent = 'Logout'
@@ -262,7 +231,7 @@ window.addEventListener('load', () => {
 		try {
 			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/login.php', {
 				method: 'POST',
-				body: userData
+				body: userData,
 			})
 
 			const data = await res.json()
@@ -344,9 +313,7 @@ window.addEventListener('load', () => {
 	document.querySelector('#close-cart').addEventListener('click', () => {
 		cartBox.classList.remove('active')
 	})
-	loginForm.addEventListener('submit', login)
-	registerForm.addEventListener('submit', register)
-	cart.loadData()
-	cart.loadCart()
 	checkLogin()
+	cart.loadCart()
+	cart.loadData()
 })

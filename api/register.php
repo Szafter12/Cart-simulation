@@ -57,4 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     } catch (PDOException $e) {
         res('error', 500, 'Error while adding new user');
     }
+} else {
+    res('error', 405, 'Method not allowed');
 }

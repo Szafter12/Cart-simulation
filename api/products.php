@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db_conn.php';
+require_once 'utils.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -12,33 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $stmt = $conn->prepare($sql);
         if ($stmt->execute()) {
             $products = $stmt->fetchAll();
-            http_response_code(200);
-            echo json_encode([
-                'status' => 'success',
-                'data' => $products
-            ]);
-            exit;
+            res('success', 200, 'Data successfuly fetch', $products);
         } else {
-            serverError();
+            res('error', 500, 'Something went wrong on the server');
         }
     } catch (PDOException $e) {
-        serverError();
+        res('error', 500, 'Something went wrong on the server');
     }
 } else {
-    http_response_code(405);
-    echo json_encode([
-        'status' => 'error',
-        'message' => "Nieobsługiwana metoda żądania"
-    ]);
-    exit;
-}
-
-function serverError()
-{
-    http_response_code(500);
-    echo json_encode([
-        'status' => 'error',
-        'message' => "Błąd serwera spróbuj później"
-    ]);
-    exit;
+    res('error', 405, 'Method not allowed');
 }

@@ -13,6 +13,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_SESSION['user_id'])) {
         res('success', 200, 'User is logged in');
     } else {
-        res('error',200, 'User unknow');
+        res('error', 200, 'User unknow');
     }
+} else {
+    res('error', 405, 'Method not allowed');
 }
