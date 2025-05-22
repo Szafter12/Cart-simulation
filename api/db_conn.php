@@ -1,8 +1,8 @@
 <?php
 
 $dsn = "mysql:host=localhost;dbname=cart_sim";
-$username = "szafter";
-$password = "Karate00200020.";
+$username = "root";
+$password = "";
 
 try {
     $conn = new PDO($dsn, $username, $password);

@@ -5,7 +5,7 @@ class Cart {
 
 	async loadData() {
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/products.php')
+			const res = await fetch('http://localhost/Cart-simulation/api/products.php')
 			if (!res.ok) {
 				throw new Error(`HTTP error! status: ${res.status}`)
 			}
@@ -66,7 +66,7 @@ class Cart {
 	async addToCart(product) {
 		const id = product.id
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/addToCart.php', {
+			const res = await fetch('http://localhost/Cart-simulation/api/addToCart.php', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'Application/json',
@@ -108,7 +108,7 @@ class Cart {
 
 	async loadCart() {
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/showCart.php', {
+			const res = await fetch('http://localhost/Cart-simulation/api/showCart.php', {
 				method: 'GET',
 				credentials: 'include',
 			})
@@ -170,7 +170,7 @@ class Cart {
 		// this.cartArray.splice(index, 1)
 		console.log(id);
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/removeFromCart.php', {
+			const res = await fetch('http://localhost/Cart-simulation/api/removeFromCart.php', {
 				method: 'DELETE',
 				credentials: 'include',
 				body: JSON.stringify({
@@ -198,7 +198,7 @@ window.addEventListener('load', () => {
 	let isLoggedIn = false
 
 	async function checkLogin() {
-		const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/checkUser.php', {
+		const res = await fetch('http://localhost/Cart-simulation/api/checkUser.php', {
 			credentials: 'include',
 			method: 'GET',
 		})
@@ -247,7 +247,7 @@ window.addEventListener('load', () => {
 		msgBox.textContent = ''
 
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/login.php', {
+			const res = await fetch('http://localhost/Cart-simulation/api/login.php', {
 				method: 'POST',
 				body: userData,
 			})
@@ -281,7 +281,7 @@ window.addEventListener('load', () => {
 		msgBox.textContent = ''
 
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/register.php', {
+			const res = await fetch('http://localhost/Cart-simulation/api/register.php', {
 				method: 'POST',
 				body: userData,
 			})
@@ -311,7 +311,7 @@ window.addEventListener('load', () => {
 
 	async function logout() {
 		try {
-			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/logout.php', {
+			const res = await fetch('http://localhost/Cart-simulation/api/logout.php', {
 				method: 'GET',
 			})
 
