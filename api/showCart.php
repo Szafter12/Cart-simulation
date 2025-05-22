@@ -12,7 +12,7 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_SESSION['user_id'])) {
         try {
-            $sql = "SELECT name,price,photo_path FROM products JOIN cart ON products.id = cart.product_id 
+            $sql = "SELECT products.id,name,price,photo_path FROM products JOIN cart ON products.id = cart.product_id 
                 WHERE cart.user_id = :user_id";
             $stmt = $conn->prepare($sql);
             if ($stmt->execute([
@@ -22,10 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                 res('success', 200, 'Products fetch successfully', $products);
             } else {
-                res('error', 500, 'Something went wrong on the server');
+                res('error', 500, 'Something went wrong on the server', $e);
             }
         } catch (PDOException $e) {
-            res('error', 500, 'Something went wrong on the server');
+            res('error', 500, 'Something went wrong on the server', $e);
         }
     } else {
         if (isset($_COOKIE['cart'])) {
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $placeholders = implode(',', array_fill(0, count($products), '?'));
 
             try {
-                $sql = "SELECT name,price,photo_path FROM products WHERE id IN ($placeholders)";
+                $sql = "SELECT id,name,price,photo_path FROM products WHERE id IN ($placeholders)";
 
                 $stmt = $conn->prepare($sql);
                 if ($stmt->execute($products)) {

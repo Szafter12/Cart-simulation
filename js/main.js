@@ -85,7 +85,7 @@ class Cart {
 				this.loadCart()
 			}
 		} catch (e) {
-			console.error('Wystąpił błąd podczas dodawania do koszyka')
+			console.error('some error try again later')
 		}
 
 		this.finalPrice()
@@ -119,7 +119,7 @@ class Cart {
 				this.cartArray = data.data
 			}
 		} catch (e) {
-			console.error('Wystąpił błąd podczas pobierania koszyka')
+			console.error('some error try again later')
 		}
 
 		document.querySelector('.cart-container').textContent = ''
@@ -154,7 +154,7 @@ class Cart {
 
 	finalPrice() {
 		let priceQuantity = 0
-		
+
 		this.cartArray.forEach(el => {
 			priceQuantity += Number(el.price)
 		})
@@ -164,10 +164,28 @@ class Cart {
 		)}$</span>`
 	}
 
-	delFromCart(id) {
-		const index = this.cartArray.findIndex(el => el.id === id)
-		this.cartArray.splice(index, 1)
-		this.loadCart()
+	async delFromCart(id) {
+		// const index = this.cartArray.findIndex(el => el.id === id)
+		console.log(this.cartArray);
+		// this.cartArray.splice(index, 1)
+		console.log(id);
+		try {
+			const res = await fetch('http://localhost/Cart-simulation-JavaScript/api/removeFromCart.php', {
+				method: 'DELETE',
+				credentials: 'include',
+				body: JSON.stringify({
+					product_id: id
+				})
+			})
+
+			const data = await res.json()
+
+			if (data.status === 'success') {
+				this.loadCart()
+			}
+		} catch (e) {
+			console.error('Some error try again later')
+		}
 	}
 }
 

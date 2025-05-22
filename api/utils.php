@@ -1,6 +1,6 @@
 <?php
 
-function res($status, $code, $msg = '', $data = []) {
+function res($status, $code, $msg = '', $data = []): void {
     http_response_code($code);
     echo json_encode([
         'status' => $status,
