@@ -47,6 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $_SESSION['surname'] = $surname;
                 $_SESSION['email'] = $email;
 
+                if (isset($_COOKIE['cart'])) {
+                    addFromCookie($_SESSION['user_id'], $conn);
+                }
+
                 res('success', 200, 'User successfuly register');
             } else {
                 res("error", 400, "User already exist");
@@ -59,4 +63,44 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 } else {
     res('error', 405, 'Method not allowed');
+}
+
+
+function addFromCookie($user, $conn)
+{
+    $product_ids = json_decode($_COOKIE['cart'], true);
+    $products = $product_ids['product_id'];
+
+    if (!is_array($products)) {
+        try {
+            $sql = "INSERT INTO cart (user_id, product_id) VALUES (:user_id, :product_id)";
+            $stmt = $conn->prepare($sql);
+
+            if ($stmt->execute([
+                'user_id' => $user,
+                'product_id' => $products
+            ])) {
+                setcookie('cart', '', time() - 3600, '/');
+                unset($_COOKIE['cart']);
+            }
+        } catch (PDOException $e) {
+            res('error', 500, "SOmething went wrong");
+        }
+    } else {
+        try {
+            foreach ($products as $product) {
+                $sql = "INSERT INTO cart (user_id, product_id) VALUES (:user_id, :product_id)";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute([
+                    'user_id' => $user,
+                    'product_id' => $product
+                ]);
+            }
+
+            setcookie('cart', '', time() - 3600, '/');
+            unset($_COOKIE['cart']);
+        } catch (PDOException $e) {
+            res('error', 500, "Something went wrong");
+        }
+    }
 }
