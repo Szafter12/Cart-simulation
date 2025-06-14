@@ -2,6 +2,10 @@
 
 This is a simple simulation of an e-commerce shopping cart system built with **PHP**, **MySQL**, and **JavaScript**. The project demonstrates how cart data is handled both for logged-in and guest users, using **cookies** and **server-side sessions**.
 
+## Demo
+
+http://jakubpachut.duckdns.org/Cart-simulation/
+
 ## 🚀 Features
 
 - User login and registration system
